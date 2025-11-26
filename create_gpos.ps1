@@ -1,11 +1,5 @@
 #https://github.com/NilesFerrier/scripts/blob/main/create_gpos.ps1
 
-#Start Transcript and backup current GPOs
-Start-Transcript -Path "C:\HardeningLogs\AntiMimikatz_$(Get-Date -Format 'yyyy-MM-dd_HHmmss').log"
-Write-Output "Backing Up GPOs..."
-mkdir C:\GPOBackup
-Get-GPO -All | Backup-GPO -Path C:\GPOBackup\ -Comment "$(Get-Date)"
-
 Write-Output "Installing PSFramework..."
 Install-Module -Name PSFramework
 Write-Output "Installing GPPolicies..."
