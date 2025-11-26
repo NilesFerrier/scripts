@@ -1,0 +1,26 @@
+hawk setup
+
+Roles
+
+Global Reader | Assignments
+Add user
+select member
+
+exchange role assignment
+create new role
+hawktester
+add permissions
+User Options, View-Only Audit Logs, View-Only Configuration, View-Only Recipients
+user.options
+view only audit logs
+viewonly conf
+view only recipients
+add user
+
+
+ms graph permissions
+connect-msgraph -
+Connect-MGGraph -Scopes 'User.Read.All', 'Directory.Read.All','DeviceManagementServiceConfig.Read.All', 'AuditLog.Read.All', 'IdentityRiskEvent.Read.All', 'IdentityRiskyUser.Read.All'
+
+
+3350661

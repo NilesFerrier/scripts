@@ -1,0 +1,325 @@
+#gss-stellar
+CONFIGURE
+hyper-v
+https://surofskynet-my.sharepoint.com/:u:/g/personal/jeff_surofsky_net/EbRHY7SwE4dJnNuIY_ChzTEBaWdXl_QkxGrow2WZn0xrQA?e=o9o49r
+
+VMware:
+5.4.0
+https://surofskynet-my.sharepoint.com/:u:/g/personal/jeff_surofsky_net/EfXS2gOWjqhKnEnhMPpW9w0BMfhpH6JeMhEuSbWrRKV29w?e=pfB6Pe
+
+5.1.1
+https://surofskynet-my.sharepoint.com/:u:/g/personal/jeff_surofsky_net/Ed1LmWZ2KB9PlBypzFrAELIBAO6GOzRqDbswA7Oylzh6bg?e=QRUVue
+
+gss-stellar
+dont froget to rename search and replace -Stellar
+Os7 needs different script
+
+
+esxcli system syslog config set --loghost='192.168.50.53:5600'
+
+
+service-object Stellar_4789_UDP UDP 4789 4789
+service-object Stellar_8472_UDP UDP 8472 8472
+service-object Stellar_8888_TCP TCP 8888 8888
+service-object Stellar_8443_TCP TCP 8443 8443
+service-object Stellar_6640-6648 TCP 6640 6648
+
+address-object fqdn ip.uptimerobot.com
+    name ip.uptimerobot.com
+    zone WAN
+    domain ip.uptimerobot.com
+    no dns-ttl
+    exit
+
+service-group Stellar_UDP_Services
+    service-object Stellar_8472_UDP
+    service-object Stellar_4789_UDP
+exit
+
+service-group Stellar_TCP_Services
+    service-object Stellar_6640-6648
+    service-object Stellar_8443_TCP
+    service-object Stellar_8888_TCP
+    exit
+
+address-object ipv4 0.0.0.0_LAN
+    name 0.0.0.0_LAN
+    zone LAN
+    no host
+    exit
+
+address-object ipv4 0.0.0.0_WAN
+    name 0.0.0.0_WAN
+    zone WAN
+    no host
+    exit
+
+address-group ipv4 Stellar_src_group
+    name Stellar_src_group
+    address-object ipv4 0.0.0.0_WAN
+    exit
+
+address-group ipv4 Stellar_dst_group
+    name Stellar_dst_group
+    address-object ipv4 0.0.0.0_LAN
+    exit
+
+address-object fqdn Stellar_FQDN_cm
+    name Stellar_FQDN_cm
+    zone WAN
+    domain cm-cyflare.stellarcyber.cloud
+    no dns-ttl
+    exit
+
+address-object fqdn Stellar_FQDN_rcv
+    name Stellar_FQDN_rcv
+    zone WAN
+    domain receiver-cyflare.stellarcyber.cloud
+    no dns-ttl
+    exit
+
+address-group ipv4 Stellar_FQDNs
+    name Stellar_FQDNs
+    address-object fqdn Stellar_FQDN_rcv
+    address-object fqdn Stellar_FQDN_cm
+    exit
+
+log category "Security Services" group IPS
+    priority-level debug
+    log-monitor redundancy-interval 0
+    email-alert redundancy-interval 0
+    syslog redundancy-interval 0
+    ipfix redundancy-interval 0
+    event-profile syslog-server-profile 0
+    log-digest
+    color hex 0x00FF0000
+    no alert-email
+    exit
+
+log category "Security Services" group IDP
+    priority-level debug
+    log-monitor redundancy-interval 0
+    email-alert redundancy-interval 0
+    syslog redundancy-interval 0
+    ipfix redundancy-interval 0
+    event-profile syslog-server-profile 0
+    log-digest
+    color hex 0x00FF0000
+    no alert-email
+    exit
+
+log category "Security Services" group IPS event "IPS Detection Alert"
+    priority-level debug
+    log-monitor redundancy-interval 0
+    email-alert redundancy-interval 0
+    syslog redundancy-interval 0
+    ipfix redundancy-interval 0
+    event-profile syslog-server-profile 0
+    log-digest
+    color hex 0x00FF0000
+    no alert-email
+    exit
+
+log category "Security Services" group IPS event "IPS Prevention Alert"
+    priority-level debug
+    log-monitor redundancy-interval 0
+    email-alert redundancy-interval 0
+    syslog redundancy-interval 0
+    ipfix redundancy-interval 0
+    event-profile syslog-server-profile 0
+    log-digest
+    color hex 0x00FF0000
+    no alert-email
+    exit
+
+log category "Security Services" group IDP event "IDP Detection Alert"
+    priority-level debug
+    log-monitor redundancy-interval 0
+    email-alert redundancy-interval 0
+    syslog redundancy-interval 0
+    ipfix redundancy-interval 0
+    event-profile syslog-server-profile 0
+    log-digest
+    color hex 0x00FF0000
+    no alert-email
+    exit
+
+log category "Security Services" group IDP event "IDP Prevention Alert"
+    priority-level debug
+    log-monitor redundancy-interval 0
+    email-alert redundancy-interval 0
+    syslog redundancy-interval 0
+    ipfix redundancy-interval 0
+    event-profile syslog-server-profile 0
+    log-digest
+    color hex 0x00FF0000
+    no alert-email
+    exit
+
+access-rule ipv4 from LAN to WAN action allow source address name gss-stellar service group Stellar_UDP_Services destination address group Stellar_FQDNs
+    name "Allow Stellar Cyber UDP"
+    enable
+    from LAN
+    to WAN
+    action allow
+    source address name gss-stellar
+    source port any
+    service group Stellar_UDP_Services
+    destination address group Stellar_FQDNs
+    schedule always-on
+    users included all
+    users excluded none
+    no comment
+    fragments
+    logging
+    no sip
+    no h323
+    no flow-reporting
+    no botnet-filter
+    no packet-monitoring
+    no management
+    max-connections 100
+    priority auto
+    tcp timeout 15
+    no tcp urgent
+    udp timeout 30
+    no connection-limit source
+    no connection-limit destination
+    dpi
+    dpi-ssl client
+    dpi-ssl server
+    quality-of-service dscp preserve
+    no quality-of-service class-of-service
+    exit
+
+
+access-rule ipv4 from LAN to WAN action allow source address name gss-stellar service group Stellar_TCP_Services destination address group Stellar_FQDNs
+    name "Allow Stellar Cyber TCP"
+    enable
+    from LAN
+    to WAN
+    action allow
+    source address name gss-stellar
+    source port any
+    service group Stellar_TCP_Services
+    destination address group Stellar_FQDNs
+    schedule always-on
+    users included all
+    users excluded none
+    no comment
+    fragments
+    logging
+    no sip
+    no h323
+    no flow-reporting
+    no botnet-filter
+    no geo-ip-filter
+    no packet-monitoring
+    no management
+    max-connections 100
+    priority auto
+    tcp timeout 15
+    no tcp urgent
+    udp timeout 30
+    no connection-limit source
+    no connection-limit destination
+    dpi
+    dpi-ssl client
+    dpi-ssl server
+    quality-of-service dscp preserve
+    no quality-of-service class-of-service
+    exit
+
+
+access-rule ipv4 from LAN to WAN action deny destination address group Stellar_dst_group
+    name Stellar_dst_rule
+    enable
+    from LAN
+    to WAN
+    action deny
+    source address any
+    source port any
+    service any
+    destination address group Stellar_dst_group
+    schedule always-on
+    users included all
+    users excluded none
+    no comment
+    fragments
+    logging
+    no sip
+    no h323
+    no flow-reporting
+    no botnet-filter
+    no geo-ip-filter
+    no packet-monitoring
+    no management
+    max-connections 100
+    priority auto
+    tcp timeout 15
+    no tcp urgent
+    udp timeout 30
+    no connection-limit source
+    no connection-limit destination
+    dpi
+    dpi-ssl client
+    dpi-ssl server
+    quality-of-service dscp preserve
+    no quality-of-service class-of-service
+    exit
+
+
+access-rule ipv4 from WAN to LAN action deny source address group Stellar_src_group
+    name Stellar_src_rule
+    enable
+    from WAN
+    to LAN
+    action deny
+    source address group Stellar_src_group
+    source port any
+    service any
+    destination address any
+    schedule always-on
+    users included all
+    users excluded none
+    no comment
+    fragments
+    logging
+    no sip
+    no h323
+    no flow-reporting
+    no botnet-filter
+    no geo-ip-filter
+    no packet-monitoring
+    no management
+    max-connections 100
+    priority auto
+    tcp timeout 15
+    no tcp urgent
+    udp timeout 30
+    no connection-limit source
+    no connection-limit destination
+    dpi
+    dpi-ssl client
+    dpi-ssl server
+    quality-of-service dscp preserve
+    no quality-of-service class-of-service
+    exit
+
+configure terminal
+logging-service enable
+logging-server gss-stellar
+  port 5152
+  format enhanced  # e.g., enhanced, default, arcsight
+  exit
+
+
+
+syslog
+	add server name gss-stellar
+ 	port 5152
+ 	format enhanced
+	commit
+ end
+
+COMMIT

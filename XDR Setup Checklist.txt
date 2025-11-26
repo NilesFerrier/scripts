@@ -1,0 +1,204 @@
+inXDR Setup Checklist
+login to portal to order xdr / s1 complete if necessary.
+Static ip for XDR Appliance/VM
+syslog from firewall to appliance Sonicwall is port 5152
+mirrored traffic to appliance
+set dhcp_log enable ip <sensor ip address>
+office365 connector
+entra connector
+duo connector
+firewall connector
+
+on the onboarding form ask for atlantic_company name be sent as company name
+esxcli system syslog config set --loghost='10.10.2.8:5600'
+
+
+Static IP
+
+Substitute your own IP parameters for those shown in bold.
+
+concord - set tenant_id 4d8b1f2972434fb7a9842df051679d89
+	
+set tenant_id 64ee61d6534141a98f03176178d7b3c3
+set tenant_id aa30621489434a508c15ccc28dd6eed9 Living Cities
+set tenant_id 00d6b85bb00b45e4a3d2e1d90dc7f627 Wong Fleming
+set tenant_id cd825a7f79044cfaa844b7414bc4c65c General Sullivan Steel
+set tenant_id 4969d24d00b94679b5dfaf3314d0ced0 Diamond Communications LLC
+set tenant_id 4d8b1f2972434fb7a9842df051679d89 Concord
+set tenant_id d49d6b3fb89c434cb5c512fff9de0596 ???
+set cm cm-cyflare.stellarcyber.cloud
+msiexec /i \\rccagroup\netlogon\stellaragent\aellads_5.3.0_windows-x64_20241015_0016e69.msi /quiet /norestart CM_HOST=cm-cyflare.stellarcyber.cloud TENANT_ID=64ee61d6534141a98f03176178d7b3c3
+
+esxcli system syslog config set --loghost='192.168.73.18:5600'
+
+
+
+192.168.76.13
+
+set interface management ip 192.168.133.254/255.255.255.0
+
+set interface management gateway 192.168.0.2
+
+set interface management dns 8.8.8.8 
+
+Centerlight - set interface management dns 10.0.60.20 8.8.8.8show in
+
+
+For sensors, please follow this order of setup: set hostname --> set tenant ID--> Set CM
+
+VMware: 'tcp://10.0.32.18:514'
+esxcli system snmp set --enable=true
+esxcli system snmp set --communities=ato-public
+rizbook esxcli system syslog config set --loghost='udp://192.168.8.41:5600'
+rcca esxcli system syslog config set --loghost='udp://10.100.22.8:5600'
+esxcli system syslog config set --loghost='udp://10.2.30.252:5600'
+esxcli system syslog config set --log-level=debug
+esxcli system syslog reload
+
+wmi filter for servers only - 
+root\CIMv2
+SELECT * FROM Win32_OperatingSystem WHERE Caption LIKE "%server%"
+ 
+aella default password - aella/changeme
+
+putty into vm or box to copy/paste tenant id and cm
+
+Make Sure, if upgrading to S1 Complete Deep Vis is on.
+
+windows agents have to be authorized in the STellar Portal. 
+
+install Sysmon, run cmd prompt as admin :
+Sysmon64.exe -accepteula -i "c:\ProgramData\StellarCyber\Windows Agent Sensor\config\stellar_syswatcher.xml"
+i:\sysmon\Sysmon64.exe -accepteula -i "c:\ProgramData\StellarCyber\Windows Agent Sensor\config\stellar_syswatcher.xml"
+must email TechOps to have Sysmon profiles applied.
+
+Sonicwall Connector? 
+Make sure https user login is enabled on wan on v6.x
+
+IT Glue:
+configuration "Company Stellar Cyber"
+related items:
+companyname initials-stellar
+domain admin account
+cli pw
+update security solution
+
+set dhcp_log enable ip 10.7.101.250
+show dhcp_log
+
+Documentation-
+
+
+Enable Promiscuos mode-
+$a = Get-VMSystemSwitchExtensionPortFeature -FeatureId 776e0ba7-94a1-41c8-8f28-951f524251b5
+$a.SettingData.MonitorMode = 2
+Stellar Mirror Traffic
+"add-VMSwitchExtensionPortFeature -ExternalPort -SwitchName <name of the switch> -VMSwitchExtensionFeature $a"
+add-VMSwitchExtensionPortFeature -ExternalPort -SwitchName Stellar Mirror Traffic -VMSwitchExtensionFeature $a
+
+Installing Sensor in VMWARE :
+
+https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Installation/On-Prem/Installing-Modular-Sensor-VMware.htm?tocpath=INSTALLING%7CInstalling%20a%20Modular%20Sensor%7C_____6
+
+Installing Windows Sensor
+https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Installation/On-Prem/Installing-Agent-Sensor-Windows.htm?tocpath=INSTALLING%7CInstalling%20a%20Server%20Sensor%20(Agent)%7C_____4
+
+Installing Modular Sensor in Azure:
+https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Installation/On-Prem/Installing-Modular-Sensor-Azure.htm?tocpath=INSTALLING%7CInstalling%20a%20Modular%20Sensor%7C_____2
+
+https://docs.stellarcyber.ai/prod-docs/5.3.x/Installation/On-Prem/Installing-Modular-Sensor-Azure.htm
+
+set dhcp_log enable ip <sensor ip address>
+
+Log Parser Ports:
+https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Configure/Ports/Firewall-Ports-for-Parsers.htm?tocpath=CONFIGURING%7CConfiguring%20your%20Firewall%7C_____2#Vendor
+HP Switch - 5595
+Sonicwall - 5152
+VMware ESXi - 5600
+VMware vcenter - 5615
+aruba Switch - 5577
+aruba - configure | logging ipaddress udp 5577
+Windows DNS Server 5599 windows_dns_server
+ubiquiti - 5552
+Cisco Switch -  5158  - logging host 10.10.1.95 transport udp port 5158
+Meraki - 5172
+Dell Idrac - 5566
+Nasuni - 5592
+
+DUO Connector: 
+https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Configure/Connectors/Duo-Security-Connectors.htm?tocpath=CONFIGURING%7CConfiguring%20Connectors%7C_____37
+
+Office365 Connector:
+https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Configure/Connectors/Office-365-Connectors.htm?tocpath=CONFIGURING%7CConfiguring%20Connectors%7C_____63
+
+EntraID Connector - 
+https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Configure/Connectors/Azure-Active-Directory-Connectors.htm?tocpath=CONFIGURING%7CConfiguring%20Connectors%7C_____57
+
+AD Connector-
+https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Configure/Connectors/Active-Directory-Connectors.htm?tocpath=CONFIGURING%7CConfiguring%20Connectors%7C_____5
+
+Sonicwall Connector-
+https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Configure/Connectors/SonicWall-Firewall-Connectors.htm?tocpath=CONFIGURING%7CConfiguring%20Connectors%7C_____77
+
+If client doesn't have umbrella roaming agents then setup the umbrella connector:
+https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Configure/Connectors/Cisco-Umbrella-Connectors.htm?tocpath=CONFIGURING%7CConfiguring%20Connectors%7C_____27
+
+
+Sonicwall Mirroring Setup
+
+
+Firewall Ports and fqdns:
+!telnet receiver-cyflare.stellarcyber.cloud 8889
+
+cm-cyflare.stellarcyber.cloud
+
+Stellar-4789-udp
+
+8472 udp
+
+6640-6648 tcp
+
+8443 tcp
+
+8888 tcp
+
+●      Stellar_6640-6648 TCP to cm-cyflare.stellarcyber.cloud,  141.148.147.188
+●      Stellar_8443 TCP to cm-cyflare.stellarcyber.cloud, 141.148.147.188
+●      Stellar_8888 TCP to receiver-cyflare.stellarcyber.cloud
+●      Stellar_8472 UDP to 54.176.232.64
+●      Stellar_4789 UDP to 54.176.232.64
+
+Add to Security solutions in IT GLue
+
+Add Security Remediations GPO to Security Solutions
+Kerberos logging
+llmnr 
+
+
+
+msiexec /i \\centerlight.cl.local\NETLOGON\aellads_5.2.0_windows-x64_20240708_00fd33d.msi /quiet /norestart CM_HOST=cm-cyflare.stellarcyber.cloud TENANT_ID=3695e5c6b6994c48ac28e11ebb3aeb65 AGG_HOST1="" AGG_HOST2="" 
+
+
+esxcli system syslog config set --loghost='udp://192.168.3.236:5600'
+
+
+# Replace <vSwitchName> with the name of your virtual switch
+$vSwitchName = "Mirror Traffic"
+
+# Get the Ethernet Switch Port Security Settings feature
+$feature = Get-VMSystemSwitchExtensionPortFeature -FeatureName "Ethernet Switch Port Security Settings"
+
+# Set MonitorMode to 2 (Source) to enable port mirroring
+$feature.SettingData.MonitorMode = 2
+
+# Add the feature to the external port of the virtual switch
+Add-VMSwitchExtensionPortFeature -ExternalPort -SwitchName $vSwitchName -VMSwitchExtensionFeature $feature
+
+Get-VM -Name virtual machine name | Get-VMNetworkAdapter | Where-Object { $_.MacAddress -eq "00155DFC8801" } | Set- VMNetworkAdapter -MacAddressSpoofing On
+
+00155DFC8801
+
+
+
+
+
