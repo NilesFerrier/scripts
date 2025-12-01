@@ -54,6 +54,8 @@ rcca esxcli system syslog config set --loghost='udp://10.100.22.8:5600'
 esxcli system syslog config set --loghost='udp://10.2.30.252:5600'
 esxcli system syslog config set --log-level=debug
 esxcli system syslog reload
+esxcli system wbem set –-enable true
+/etc/init.d/sfcbd-watchdog start
 
 wmi filter for servers only - 
 root\CIMv2
