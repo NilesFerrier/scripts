@@ -127,6 +127,10 @@ Meraki - 5172
 Dell Idrac - 5566
 Nasuni - 5592
 
+
+sizing specifications.
+https://doc-server.stellarcyber.ai/5.2.x/Installation/Virtual-Appliance-Sizing-Specifications.htm?Highlight=Virtual
+
 DUO Connector: 
 https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Configure/Connectors/Duo-Security-Connectors.htm?tocpath=CONFIGURING%7CConfiguring%20Connectors%7C_____37
 
