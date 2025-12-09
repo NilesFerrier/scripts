@@ -145,6 +145,15 @@ https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Configure/Connectors/Active-D
 
 Sonicwall Connector-
 https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Configure/Connectors/SonicWall-Firewall-Connectors.htm?tocpath=CONFIGURING%7CConfiguring%20Connectors%7C_____77
+Contact SOAR 
+socir
+krunalm@CyFlare.com
+bryanr@CyFlare.com
+
+ATO: Moorestown specifically.
+
+
+
 
 If client doesn't have umbrella roaming agents then setup the umbrella connector:
 https://doc-server.stellarcyber.ai/prod-docs/5.1.1/Configure/Connectors/Cisco-Umbrella-Connectors.htm?tocpath=CONFIGURING%7CConfiguring%20Connectors%7C_____27
@@ -187,20 +196,9 @@ msiexec /i \\centerlight.cl.local\NETLOGON\aellads_5.2.0_windows-x64_20240708_00
 
 esxcli system syslog config set --loghost='udp://192.168.3.236:5600'
 
-
-# Replace <vSwitchName> with the name of your virtual switch
-$vSwitchName = "Mirror Traffic"
-
-# Get the Ethernet Switch Port Security Settings feature
-$feature = Get-VMSystemSwitchExtensionPortFeature -FeatureName "Ethernet Switch Port Security Settings"
-
-# Set MonitorMode to 2 (Source) to enable port mirroring
-$feature.SettingData.MonitorMode = 2
-
-# Add the feature to the external port of the virtual switch
-Add-VMSwitchExtensionPortFeature -ExternalPort -SwitchName $vSwitchName -VMSwitchExtensionFeature $feature
-
-Get-VM -Name virtual machine name | Get-VMNetworkAdapter | Where-Object { $_.MacAddress -eq "00155DFC8801" } | Set- VMNetworkAdapter -MacAddressSpoofing On
+Get-VM -Name virtual machine name | Get-VMNetworkAdapter 
+copy mac address into the where object
+Get-VM -Name "TEI Stellar Cyber" | Get-VMNetworkAdapter | Where-Object { $_.MacAddress -eq "00155DFC8801" } | Set- VMNetworkAdapter -MacAddressSpoofing On
 
 00155DFC8801
 
