@@ -33,6 +33,12 @@ $params = @{
 }
 Set-GPRegistryValue @params
 
+New-GPO -Name "Liongard Run as System"
+Import-GPO -BackupGpoName "Liongard Run as System" -TargetName "Liongard Run as System" -Path "c:\temp\liongard"
+
+
+Restore-GPO -Name "Liongard Run as System" -Path "c:\temp\liongard"
+
 
 
 
