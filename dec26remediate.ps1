@@ -19,6 +19,10 @@ Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/m
 Expand-Archive -Path c:\temp\DuoWindowsLogon.zip -DestinationPath C:\temp
 
 Write-Output "Putting admx files in their place"
+xcopy c:\temp\admx-files\*.admx c:\windows\PolicyDefinitions /y
+xcopy c:\temp\admx-files\*.adml C:\Windows\PolicyDefinitions\en-US /y
+xcopy c:\temp\admx-files\*.admx C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions /y
+xcopy c:\temp\admx-files\*.adml C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions\en-US /y
 xcopy c:\temp\DuoWindowsLogon.admx c:\windows\PolicyDefinitions /y
 xcopy c:\temp\DuoWindowsLogon.adml C:\Windows\PolicyDefinitions\en-US /y
 xcopy c:\temp\DuoWindowsLogon.admx C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions /y
