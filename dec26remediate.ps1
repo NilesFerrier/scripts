@@ -128,7 +128,6 @@ $params = @{
     Type      = 'DWORD'
 }
 Set-GPRegistryValue @params
-Pause
 
 #IE Clear BrowsingDataonExit
 $params = @{
@@ -186,7 +185,6 @@ $params = @{
     Type      = 'String'
 }
 Set-GPRegistryValue @params
-Pause
 
 $params = @{
     Name      = 'Security Remediations - Browser Cache'
@@ -196,7 +194,7 @@ $params = @{
     Type      = 'String'
 }
 Set-GPRegistryValue @params
-Pause
+
 
 $params = @{
     Name      = 'Security Remediations - Browser Cache'
@@ -206,7 +204,6 @@ $params = @{
     Type      = 'String'
 }
 Set-GPRegistryValue @params
-Pause
 
 $params = @{
     Name      = 'Security Remediations - Browser Cache'
@@ -216,7 +213,7 @@ $params = @{
     Type      = 'String'
 }
 Set-GPRegistryValue @params
-Pause
+
 
 $params = @{
     Name      = 'Security Remediations - Browser Cache'
