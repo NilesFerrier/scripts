@@ -2,18 +2,23 @@
 
 # STAGE File Downloads
 
+Write-Output "Setting TLS 1.2"
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
+Write-Output "Downloading Liongard GPO"
 invoke-webrequest -uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/main/liongard.zip" -outfile c:\temp\liongard.zip
 expand-archive -Path C:\temp\liongard.zip -DestinationPath C:\temp\
 
+Write-Output "Downloading Admx files"
 Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/main/admx-files.zip" -OutFile c:\temp\admx-files.zip
 Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/main/DisableNetbios.ps1" -OutFile c:\temp\disablenetbios.ps1
 Expand-Archive -Path c:\temp\admx-files.zip -DestinationPath C:\temp
 
+Write-Output "Downloading DUO Admx files"
 Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/main/DuoWindowsLogon.zip" -OutFile c:\temp\DuoWindowsLogon.zip
 Expand-Archive -Path c:\temp\DuoWindowsLogon.zip -DestinationPath C:\temp
 
+Write-Output "Putting admx files in their place"
 xcopy c:\temp\DuoWindowsLogon.admx c:\windows\PolicyDefinitions /y
 xcopy c:\temp\DuoWindowsLogon.adml C:\Windows\PolicyDefinitions\en-US /y
 xcopy c:\temp\DuoWindowsLogon.admx C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions /y
