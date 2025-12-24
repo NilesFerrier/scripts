@@ -19,13 +19,13 @@ Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/m
 Expand-Archive -Path c:\temp\DuoWindowsLogon.zip -DestinationPath C:\temp
 
 Write-Output "Putting admx files in their place"
-xcopy c:\temp\admx-files\*.admx c:\windows\PolicyDefinitions /y
+xcopy c:\temp\admx-files\*.admx c:\windows\PolicyDefinitions\ /y
 xcopy c:\temp\admx-files\*.adml C:\Windows\PolicyDefinitions\en-US /y
-xcopy c:\temp\admx-files\*.admx C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions /y
+xcopy c:\temp\admx-files\*.admx C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions\ /y
 xcopy c:\temp\admx-files\*.adml C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions\en-US /y
-xcopy c:\temp\DuoWindowsLogon.admx c:\windows\PolicyDefinitions /y
+xcopy c:\temp\DuoWindowsLogon.admx c:\windows\PolicyDefinitions\ /y
 xcopy c:\temp\DuoWindowsLogon.adml C:\Windows\PolicyDefinitions\en-US /y
-xcopy c:\temp\DuoWindowsLogon.admx C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions /y
+xcopy c:\temp\DuoWindowsLogon.admx C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions\ /y
 xcopy c:\temp\DuoWindowsLogon.adml C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions\en-US /y
 
 # Disable Roar, and add users to Protected Users Group
@@ -96,3 +96,136 @@ Write-Output "Linking 3 GPOs..."
 New-GPLink -Name "Security Remediations - Servers" -Target "OU=Domain Controllers,$((Get-ADDomain).DistinguishedName)" -LinkEnabled Yes
 New-GPLink -Name "Security Remediations - Browser Cache" -Target "OU=Domain Controllers,$((Get-ADDomain).DistinguishedName)" -LinkEnabled Yes
 New-GPLink -Name "Security Remediations" -Target "$((Get-ADDomain).DistinguishedName)" -LinkEnabled Yes
+
+# Set GPO Parameters
+Write-Output "Disable wpad"
+$params = @{
+    Name      = 'Security Remediations'
+    Key       = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp'
+    ValueName = 'DisableWpad'
+    Value     = 1
+    Type      = 'DWORD'
+}
+Set-GPRegistryValue @params
+
+Write-Output "Disable LLMNR"
+$params = @{
+    Name      = 'Security Remediations'
+    Key       = 'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient'
+    ValueName = 'EnableMulticast'
+    Value     = 0
+    Type      = 'DWORD'
+}
+Set-GPRegistryValue @params
+
+Write-Output "Clear Edge and IE Browsing Data on Exit"
+#Edge Clear BrowsingDataonExit
+$params = @{
+    Name      = 'Security Remediations - Browser Cache'
+    Key       = 'HKLM\SOFTWARE\Policies\Microsoft\Edge'
+    ValueName = 'ClearBrowsingDataOnExit'
+    Value     = 1
+    Type      = 'DWORD'
+}
+Set-GPRegistryValue @params
+Pause
+
+#IE Clear BrowsingDataonExit
+$params = @{
+    Name      = 'Security Remediations - Browser Cache'
+    Key       = 'HKLM\SOFTWARE\Policies\Microsoft\Edge'
+    ValueName = 'InternetExplorerModeClearDataOnExitEnabled'
+    Value     = 1
+    Type      = 'DWORD'
+}
+Set-GPRegistryValue @params 
+
+Write-Output "Firefox Browsing Data on Exit"
+$params = @{
+    Name      = 'Security Remediations - Browser Cache'
+    Key       = 'HKLM\SOFTWARE\Policies\Mozilla\Firefox\SanitizeOnShutdown'
+    ValueName = 'Cache'
+    Value     = 1
+    Type      = 'DWORD'
+}
+Set-GPRegistryValue @params
+
+$params = @{
+    Name      = 'Security Remediations - Browser Cache'
+    Key       = 'HKLM\SOFTWARE\Policies\Mozilla\Firefox\SanitizeOnShutdown'
+    ValueName = 'Cookies'
+    Value     = 1
+    Type      = 'DWORD'
+}
+Set-GPRegistryValue @params
+
+$params = @{
+    Name      = 'Security Remediations - Browser Cache'
+    Key       = 'HKLM\SOFTWARE\Policies\Mozilla\Firefox\SanitizeOnShutdown'
+    ValueName = 'History'
+    Value     = 1
+    Type      = 'DWORD'
+}
+Set-GPRegistryValue @params
+
+$params = @{
+    Name      = 'Security Remediations - Browser Cache'
+    Key       = 'HKLM\SOFTWARE\Policies\Mozilla\Firefox\SanitizeOnShutdown'
+    ValueName = 'Sessions'
+    Value     = 1
+    Type      = 'DWORD'
+}
+Set-GPRegistryValue @params
+
+Write-Output "Chrome Browsing Data on Exit"
+$params = @{
+    Name      = 'Security Remediations - Browser Cache'
+    Key       = 'HKLM\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList'
+    ValueName = '1'
+    Value     = 'autofill'
+    Type      = 'String'
+}
+Set-GPRegistryValue @params
+Pause
+
+$params = @{
+    Name      = 'Security Remediations - Browser Cache'
+    Key       = 'HKLM\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList'
+    ValueName = '2'
+    Value     = 'password_signin'
+    Type      = 'String'
+}
+Set-GPRegistryValue @params
+Pause
+
+$params = @{
+    Name      = 'Security Remediations - Browser Cache'
+    Key       = 'HKLM\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList'
+    ValueName = '3'
+    Value     = 'cached_images_and_files'
+    Type      = 'String'
+}
+Set-GPRegistryValue @params
+Pause
+
+$params = @{
+    Name      = 'Security Remediations - Browser Cache'
+    Key       = 'HKLM\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList'
+    ValueName = '4'
+    Value     = 'browsing_history'
+    Type      = 'String'
+}
+Set-GPRegistryValue @params
+Pause
+
+$params = @{
+    Name      = 'Security Remediations - Browser Cache'
+    Key       = 'HKLM\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList'
+    ValueName = '5'
+    Value     = 'cookies_and_other_site_data'
+    Type      = 'String'
+}
+Set-GPRegistryValue @params
+
+
+
