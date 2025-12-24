@@ -1,0 +1,89 @@
+# powershell.exe -ExecutionPolicy Bypass -File 
+
+# STAGE File Downloads
+
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
+invoke-webrequest -uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/main/liongard.zip" -outfile c:\temp\liongard.zip
+expand-archive -Path C:\temp\liongard.zip -DestinationPath C:\temp\
+
+Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/main/admx-files.zip" -OutFile c:\temp\admx-files.zip
+Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/main/DisableNetbios.ps1" -OutFile c:\temp\disablenetbios.ps1
+Expand-Archive -Path c:\temp\admx-files.zip -DestinationPath C:\temp
+
+Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/main/DuoWindowsLogon.zip" -OutFile c:\temp\DuoWindowsLogon.zip
+Expand-Archive -Path c:\temp\DuoWindowsLogon.zip -DestinationPath C:\temp
+
+xcopy c:\temp\DuoWindowsLogon.admx c:\windows\PolicyDefinitions /y
+xcopy c:\temp\DuoWindowsLogon.adml C:\Windows\PolicyDefinitions\en-US /y
+xcopy c:\temp\DuoWindowsLogon.admx C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions /y
+xcopy c:\temp\DuoWindowsLogon.adml C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions\en-US /y
+
+# Disable Roar, and add users to Protected Users Group
+
+Import-Module ActiveDirectory
+Get-ADUser -Filter 'Name -like "roar*"' -SearchBase "$((Get-ADDomain).DistinguishedName)" | Disable-ADAccount
+Get-ADUser -Filter 'Name -like "backup*"' -SearchBase "$((Get-ADDomain).DistinguishedName)" | Disable-ADAccount
+Get-ADUser -Filter 'Name -like "Lion*"' -SearchBase "$((Get-ADDomain).DistinguishedName)" | Disable-ADAccount
+Get-ADUser -Filter 'Name -like "ATO Roar*"' -SearchBase "$((Get-ADDomain).DistinguishedName)" | Disable-ADAccount
+
+Add-ADGroupMember -Identity "Protected Users" -Members "Atlantic"
+Add-ADGroupMember -Identity "Protected Users" -Members "abpadmin"
+Add-ADGroupMember -Identity "Protected Users" -Members "Administrator"
+Add-ADGroupMember -Identity "Protected Users" -Members "atoadmin"
+Add-ADGroupMember -Identity "Protected Users" -Members "acptech"
+
+Add-ADGroupMember -Identity "Protected Users" -Members "acpautomate"
+
+Get-ADGroupMember -Identity "Protected Users"
+
+
+# CREATE GPOs
+
+# LIONGARD
+# GPO that makes liongard run as localsystem
+# Import the Group Policy module if not already loaded
+Import-Module GroupPolicy
+$GPO_Name = "Liongard Run as System"
+New-GPO -Name $GPO_Name -Comment "Configures Liongard Roar to run as System"
+New-GPLink -Name "Liongard Run as System" -Target "$((Get-ADDomain).DistinguishedName)" -LinkEnabled Yes
+Import-GPO -BackupGpoName "Liongard Run as System" -TargetName "Liongard Run as System" -Path "c:\temp\"
+
+# Security Remediation GPOs
+
+# Create GPOs
+Write-Output "Configuring PSGallery Settings..."
+
+Register-PSRepository -Default -Verbose
+Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
+Write-Output "Installing PSFramework..."
+Install-Module -Name PSFramework
+Write-Output "Installing GPPolicies..."
+Install-Module -Name GPWmiFilter -RequiredVersion 1.0.5
+Import-Module -Name GPWmiFilter
+
+Write-Output "Creating the 4 GPOs..."
+New-GPO -Name "Security Remediations" -Comment "Security Remediations"
+New-GPO -Name "Security Remediations - Servers" -Comment "Server Security Remediations - Servers"
+New-GPO -Name "Security Remediations - Workstations" -Comment "Workstations Security Remediations"
+New-GPO -Name "Security Remediations - Browser Cache" -Comment "Server Browser Cache Cleanup"
+
+Write-Output "Creating the 2 WMI Filters..."
+New-GPWmiFilter -Name "Servers" -Server $env:COMPUTERNAME -Expression 'select * from Win32_OperatingSystem where ProductType="2" or ProductType="3"' -Description "Servers"
+New-GPWmiFilter -Name "Workstations" -Server $env:COMPUTERNAME -Expression 'Select * from Win32_OperatingSystem WHERE producttype = 1' -Description "Workstations"
+
+Write-Output "Apply WMI Filters..."
+$wmifilter = Get-GPWmiFilter -Name "Workstations"
+Get-GPO -Name "Security Remediations - Workstations" -Server $env:COMPUTERNAME | Set-GPWmiFilterAssignment -Filter "Workstations"
+
+$wmifilter = Get-GPWmiFilter -Name "Servers"
+Get-GPO -Name "Security Remediations - Servers" | Set-GPWmiFilterAssignment -Filter "Servers"
+
+$wmifilter = Get-GPWmiFilter -Name "Servers"
+Get-GPO -Name "Security Remediations - Browser Cache" | Set-GPWmiFilterAssignment -Filter "Servers"
+
+Write-Output "Linking 3 GPOs..."
+#Workstations GPO done manually based on environment
+New-GPLink -Name "Security Remediations - Servers" -Target "OU=Domain Controllers,$((Get-ADDomain).DistinguishedName)" -LinkEnabled Yes
+New-GPLink -Name "Security Remediations - Browser Cache" -Target "OU=Domain Controllers,$((Get-ADDomain).DistinguishedName)" -LinkEnabled Yes
+New-GPLink -Name "Security Remediations" -Target "$((Get-ADDomain).DistinguishedName)" -LinkEnabled Yes
