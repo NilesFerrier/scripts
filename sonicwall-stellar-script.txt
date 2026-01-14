@@ -1,4 +1,4 @@
-#belleville-stellar
+#mpival-stellar
 CONFIGURE
 hyper-v
 https://surofskynet-my.sharepoint.com/:u:/g/personal/jeff_surofsky_net/EbRHY7SwE4dJnNuIY_ChzTEBaWdXl_QkxGrow2WZn0xrQA?e=o9o49r
@@ -10,7 +10,7 @@ https://surofskynet-my.sharepoint.com/:u:/g/personal/jeff_surofsky_net/EfXS2gOWj
 5.1.1
 https://surofskynet-my.sharepoint.com/:u:/g/personal/jeff_surofsky_net/Ed1LmWZ2KB9PlBypzFrAELIBAO6GOzRqDbswA7Oylzh6bg?e=QRUVue
 
-belleville-stellar
+mpival-stellar
 dont froget to rename search and replace -Stellar
 Os7 needs different script
 
@@ -156,13 +156,13 @@ log category "Security Services" group IDP event "IDP Prevention Alert"
     no alert-email
     exit
 
-access-rule ipv4 from LAN to WAN action allow source address name belleville-stellar service group Stellar_UDP_Services destination address group Stellar_FQDNs
+access-rule ipv4 from LAN to WAN action allow source address name mpival-stellar service group Stellar_UDP_Services destination address group Stellar_FQDNs
     name "Allow Stellar Cyber UDP"
     enable
     from LAN
     to WAN
     action allow
-    source address name belleville-stellar
+    source address name mpival-stellar
     source port any
     service group Stellar_UDP_Services
     destination address group Stellar_FQDNs
@@ -193,13 +193,13 @@ access-rule ipv4 from LAN to WAN action allow source address name belleville-ste
     exit
 
 
-access-rule ipv4 from LAN to WAN action allow source address name belleville-stellar service group Stellar_TCP_Services destination address group Stellar_FQDNs
+access-rule ipv4 from LAN to WAN action allow source address name mpival-stellar service group Stellar_TCP_Services destination address group Stellar_FQDNs
     name "Allow Stellar Cyber TCP"
     enable
     from LAN
     to WAN
     action allow
-    source address name belleville-stellar
+    source address name mpival-stellar
     source port any
     service group Stellar_TCP_Services
     destination address group Stellar_FQDNs
@@ -308,7 +308,7 @@ access-rule ipv4 from WAN to LAN action deny source address group Stellar_src_gr
 
 configure terminal
 logging-service enable
-logging-server belleville-stellar
+logging-server mpival-stellar
   port 5152
   format enhanced  # e.g., enhanced, default, arcsight
   exit
@@ -316,7 +316,7 @@ logging-server belleville-stellar
 
 
 syslog
-	add server name belleville-stellar
+	add server name mpival-stellar
  	port 5152
  	format enhanced
 	commit

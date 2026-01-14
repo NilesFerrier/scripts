@@ -50,7 +50,7 @@ For sensors, please follow this order of setup: set hostname --> set tenant ID--
 VMware: 'tcp://10.0.32.18:514'
 esxcli system snmp set --enable=true
 esxcli system snmp set --communities=ato-public
-rizbook esxcli system syslog config set --loghost='udp://192.168.8.41:5600'
+rizbook esxcli system syslog config set --loghost='udp://10.0.0.87:5600'
 rcca esxcli system syslog config set --loghost='udp://10.100.22.8:5600'
 esxcli system syslog config set --loghost='udp://10.2.30.252:5600'
 esxcli system syslog config set --log-level=debug
