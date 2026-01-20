@@ -15,8 +15,8 @@ Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/m
 Expand-Archive -Path c:\temp\admx-files.zip -DestinationPath C:\temp
 
 Write-Output "Downloading DUO Admx files"
-Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/main/DuoWindowsLogon.zip" -OutFile c:\temp\DuoWindowsLogon.zip
-Expand-Archive -Path c:\temp\DuoWindowsLogon.zip -DestinationPath C:\temp
+Invoke-WebRequest -Uri "https://dl.duosecurity.com/DuoWinLogon_MSIs_Policies_and_Documentation-latest.zip" -OutFile c:\temp\DuoWinLogon_MSIs_Policies_and_Documentation-latest.zip
+Expand-Archive -Path c:\temp\DuoWinLogon_MSIs_Policies_and_Documentation-latest.zip -DestinationPath C:\temp
 
 Write-Output "Putting admx files in their place"
 xcopy c:\temp\admx-files\*.admx c:\windows\PolicyDefinitions\ /y
