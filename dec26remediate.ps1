@@ -224,5 +224,11 @@ $params = @{
 }
 Set-GPRegistryValue @params
 
+Get-LocalUser -Name "roar" | Select-Object Name, Enabled
+Get-LocalUser -Name "guest" | Select-Object Name, Enabled
+Get-ADGroupMember -Identity "Protected Users"
+
+
+
 
 
