@@ -14,11 +14,19 @@ Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/m
 Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/main/DisableNetbios.ps1" -OutFile c:\temp\disablenetbios.ps1
 Expand-Archive -Path c:\temp\admx-files.zip -DestinationPath C:\temp
 
+Write-Output "Downloading Lates Windows Server ADMX files"
+Invoke-WebRequest -Uri "https://github.com/NilesFerrier/scripts/raw/refs/heads/main/PolicyDefinitions.zip" -OutFile c:\temp\PolicyDefinitions.zip
+Expand-Archive -Path c:\temp\PolicyDefinitions.zip -DestinationPath C:\temp
+
 Write-Output "Downloading DUO Admx files"
 Invoke-WebRequest -Uri "https://dl.duosecurity.com/DuoWinLogon_MSIs_Policies_and_Documentation-latest.zip" -OutFile c:\temp\DuoWinLogon_MSIs_Policies_and_Documentation-latest.zip
 Expand-Archive -Path c:\temp\DuoWinLogon_MSIs_Policies_and_Documentation-latest.zip -DestinationPath C:\temp
 
 Write-Output "Putting admx files in their place"
+xcopy C:\Temp\PolicyDefinitions\*.admx c:\windows\PolicyDefinitions\ /y
+xcopy C:\Temp\PolicyDefinitions\en-US\*.adml C:\Windows\PolicyDefinitions\en-US /y
+xcopy C:\Temp\PolicyDefinitions\*.admx C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions\ /y
+xcopy C:\Temp\PolicyDefinitions\en-US\*.adml C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions\en-US /y
 xcopy c:\temp\admx-files\*.admx c:\windows\PolicyDefinitions\ /y
 xcopy c:\temp\admx-files\*.adml C:\Windows\PolicyDefinitions\en-US /y
 xcopy c:\temp\admx-files\*.admx C:\Windows\SYSVOL\sysvol\$(Get-ADForest -Current LocalComputer)\Policies\PolicyDefinitions\ /y
