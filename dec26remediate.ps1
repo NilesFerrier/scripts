@@ -236,6 +236,7 @@ Get-LocalUser -Name "roar" | Select-Object Name, Enabled
 Get-LocalUser -Name "guest" | Select-Object Name, Enabled
 Get-ADGroupMember -Identity "Protected Users"
 
+type C:\Program Files\Duo Security Authentication Proxy\conf\authproxy.cfg
 
 
 
