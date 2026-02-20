@@ -236,6 +236,16 @@ Get-LocalUser -Name "roar" | Select-Object Name, Enabled
 Get-LocalUser -Name "guest" | Select-Object Name, Enabled
 Get-ADGroupMember -Identity "Protected Users"
 
+#DUO Auth Proxy setup: 
+#1. The service account used for the AD lookups, should be a new account, not an existing user account
+#2. This service account password should be complex and 16 characters
+#3. This service account MUST NOT be a Domain Admin (Domain Admin membership is not required for a lookup)
+#4. This service account should not be synced to the DUO Portal
+#5. The configuration file is to be uploaded to IT Glue
+#6. The configuration file is to be encrypted
+#7. If RADIUS is used: password should be complex and 16 characters
+
+
 type C:\Program Files\Duo Security Authentication Proxy\conf\authproxy.cfg
 
 
